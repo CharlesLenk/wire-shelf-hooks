@@ -1,15 +1,23 @@
 include <openscad-utilities/common.scad>
 
+// Sets the interior diameter of the hook.
 hook_interior_d = 20;
+// Sets the width of the hook. Increase to support heavier objects.
 edge_width = 5;
+// Outer diameter of the hook
 hook_d = hook_interior_d + 2 * edge_width;
-bar_d = 6.5;
-bar_opening_width = 0.8 * bar_d;
-top_d = bar_d + 2 * edge_width;
+// The diameter of the rod that the hook should clip onto.
+rod_d = 6.5;
+// The min opening width for the rod. Smaller than the rod_d so the hook clips into place.
+bar_opening_width = 0.8 * rod_d;
+// The diameter of the top part with the cut for the rod.
+top_d = rod_d + 2 * edge_width;
+// Additional depth for the hook interior.
 extra_depth = 5;
+// The diameter of the edges.
 edge_d = 1;
-neck_angle = 60;
 
+neck_angle = 60;
 top_height = 2 * get_opposite_soh(neck_angle, hook_d/2 - edge_width/2) + top_d/2;
 
 hook();
@@ -35,14 +43,14 @@ module hook_blank() {
 module keyhole() {
     linear_extrude(edge_width)
         union() {
-            circle(d = bar_d);
+            circle(d = rod_d);
             polygon(
                 [
                     [0, bar_opening_width/2],
-                    [bar_d/2, bar_opening_width/2],
+                    [rod_d/2, bar_opening_width/2],
                     [top_d/2, bar_opening_width/2 + 1],
                     [top_d/2, -bar_opening_width/2 - 1],
-                    [bar_d/2, -bar_opening_width/2],
+                    [rod_d/2, -bar_opening_width/2],
                     [0, -bar_opening_width/2]
                 ]
             );
