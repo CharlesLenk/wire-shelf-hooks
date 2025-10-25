@@ -1,94 +1,102 @@
 include <openscad-utilities/common.scad>
 
-size = 5;
+// Sets the interior diameter of the hook.
+hook_interior_d = 20;
+// Sets the width of the hook. Increase to support heavier objects.
+edge_width = 5;
+// Outer diameter of the hook
+hook_d = hook_interior_d + 2 * edge_width;
+// The diameter of the rod that the hook should clip onto.
+rod_d = 6.5;
+// The min opening width for the rod. Smaller than the rod_d so the hook clips into place.
+bar_opening_width = 0.8 * rod_d;
+// The diameter of the top part with the cut for the rod.
+top_d = rod_d + 2 * edge_width;
+// Additional depth for the hook interior.
+extra_depth = 5;
+// The diameter of the edges.
 edge_d = 1;
 
-hook_d = 18;
-length = 28;
-opening_size = 5;
-bar_size = 6.5;
+neck_angle = 60;
+top_height = 2 * get_opposite_soh(neck_angle, hook_d/2 - edge_width/2) + top_d/2;
 
-attach_d = bar_size + 2 * size;
+hook();
 
-hook_straight_len = 0;
-
-top();
-bottom();
-
-module top() {
-	difference() {
-		union() {
-			hull () {
-				translate([0, 0, 0]) {
-					rotate([0, 0, 0]) {
-						rounded_cylinder(d = attach_d, h = size, top_d = edge_d, bottom_d = edge_d);
-					}
-				}
-			}
-			translate([-size/2, 0, size]) {
-				rotate([-90, 0, 0]) {
-					rounded_cube([size, size, length], edge_d, top_d = 0, bottom_d = 0);
-				}
-			}
-
-		}
-		translate([0, 0, size/2]) {
-			rotate([0, 0, 0]) cylinder(d = 6.5, h = size + 2, center = true);
-		}
-		translate([-5, 0, size/2]) {
-			cube([10, opening_size, size + 2], center = true);
-		}
-		//bump(true);
-		//translate([0, length, size/2]) rotate([90, 0, 0]) cylinder(d = 2.6, h = 10);
-	}
+module hook() {
+    difference() {
+        hook_blank();
+        translate([0, -top_height])
+            keyhole();
+    }
 }
 
-module bump(is_cut = false){
-	adjust = is_cut ? 0 : 0;
-	w = 1.5;
-	bump_size = size - w + 2 * adjust;
-
-	translate([-bump_size/2, length, bump_size/2 + size/2]) {
-		rotate([-90, 0, 0]) {
-			hull() {
-				rounded_cube_vertical([bump_size, bump_size, 0.1], edge_d + adjust);
-				h = 5;
-				translate([h/2, h/2, -(h/2 + adjust)]) {
-					rounded_cube_vertical([bump_size - h, bump_size - h, h/2 + adjust], edge_d + adjust);
-				}
-			}
-		}
-	}
+module hook_blank() {
+    translate([0, 0, edge_d/2])
+        minkowski() {
+            linear_extrude(edge_width - edge_d)
+                offset(-edge_d/2)
+                    hook_2d_with_fillet();
+            sphere(d = edge_d);
+        }
 }
 
-module bottom() {
-	difference() {
-		union() {
-			//bump();
-			//reflect([1, 0, 0]) {
-				translate([hook_d/2 + size/2, length, 0]) {
-					rotate_extrude(angle = 180) {
-						translate([hook_d/2, 0, 0]) {
-							projection() {
-								rounded_cube([size, size, 1], edge_d, top_d = 0, bottom_d = 0);
-							}
-						}
-					}
-					translate([hook_d/2 + size/2, -hook_straight_len, 0]) {
-						rounded_cylinder(d = size, h = size, top_d = edge_d, bottom_d = edge_d);
-						translate([-size/2, 0, size]) {
-							rotate([-90, 0, 0]) {
-								rounded_cube([size, size, hook_straight_len], edge_d, top_d = 0, bottom_d = 0);
-							}
-						}
-					}
-				}
-			//}
-		}
-//		translate([0, length + 3, size/2]) {
-//			rotate([90, 0, 0]) {
-//				countersink(6.3, 3.2);
-//			}
-//		}
-	}
+module keyhole() {
+    linear_extrude(edge_width)
+        union() {
+            circle(d = rod_d);
+            polygon(
+                [
+                    [0, bar_opening_width/2],
+                    [rod_d/2, bar_opening_width/2],
+                    [top_d/2, bar_opening_width/2 + 1],
+                    [top_d/2, -bar_opening_width/2 - 1],
+                    [rod_d/2, -bar_opening_width/2],
+                    [0, -bar_opening_width/2]
+                ]
+            );
+        }
+}
+
+module hook_2d_with_fillet() {
+    // Double offset will fillet interior corners
+    offset(-edge_width)
+        offset(edge_width)
+            hook_2d();
+}
+
+module hook_2d() {
+    // Bottom loop
+    translate([0, extra_depth])
+        circle_segment(hook_d, edge_width, 180);
+
+    // Bottom loop depth extension
+    translate([hook_d/2 - edge_width, 0])
+        square([edge_width, extra_depth]);
+    translate([-hook_d/2, edge_width/2]) {
+        square([edge_width, extra_depth - edge_width/2]);
+        translate([edge_width/2, 0])
+            circle(d = edge_width);
+    }
+
+    // Neck between bottom loop and top
+    rotate(-neck_angle) {
+        circle_segment(hook_d, edge_width, neck_angle);
+        translate([hook_d - edge_width, 0])
+            rotate(180)
+                circle_segment(hook_d, edge_width, neck_angle);
+    }
+
+    // Top
+    translate([0, -top_height]) {
+        circle(d = top_d);
+        translate([-edge_width/2, 0])
+            square([edge_width, top_d/2]);
+    }
+}
+
+module circle_segment(outer_d, width, angle) {
+    difference() {
+        pie_wedge(outer_d/2, angle);
+        fix_preview() pie_wedge(outer_d/2 - width, angle);
+    }
 }
