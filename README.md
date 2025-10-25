@@ -2,7 +2,9 @@
 
 The Handy Wire Shelf Hook is designed to clip onto a wire shelf and hold most light-weight items you may put in a closet, such as umbrellas, lint rollers, and reusable shopping bags.
 
-![](model_picture.png)
+|||
+|-|-|
+|![](images/model.png)|![](images/print.png)|
 
 ## Printing
 
