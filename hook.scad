@@ -67,7 +67,7 @@ module hook_2d_with_fillet() {
 module hook_2d() {
     // Bottom loop
     translate([0, extra_depth])
-        circle_segment(hook_d, edge_width, 180);
+        ring_2d(hook_d, hook_interior_d, 180);
 
     // Bottom loop depth extension
     translate([hook_d/2 - edge_width, 0])
@@ -80,10 +80,10 @@ module hook_2d() {
 
     // Neck between bottom loop and top
     rotate(-neck_angle) {
-        circle_segment(hook_d, edge_width, neck_angle);
+        ring_2d(hook_d, hook_interior_d, neck_angle);
         translate([hook_d - edge_width, 0])
             rotate(180)
-                circle_segment(hook_d, edge_width, neck_angle);
+                ring_2d(hook_d, hook_interior_d, neck_angle);
     }
 
     // Top
@@ -91,12 +91,5 @@ module hook_2d() {
         circle(d = top_d);
         translate([-edge_width/2, 0])
             square([edge_width, top_d/2]);
-    }
-}
-
-module circle_segment(outer_d, width, angle) {
-    difference() {
-        pie_wedge(outer_d/2, angle);
-        fix_preview() pie_wedge(outer_d/2 - width, angle);
     }
 }
