@@ -12,7 +12,7 @@ PETG or similar filament is recommended for printing the hook. PLA is not recomm
 
 ## Dimensions
 
-With the default settings, the hook has a 20mm interior radius, 30mm exterior radius, and a width of 5mm. 
+With the default settings, the hook has a 20mm interior radius, 30mm exterior radius, a width of 5mm, and will clip to a 6.5mm rod. 
 
 These values and more can be edited directly in `hook.scad`, or by setting additional parameters in the included export script.
 
