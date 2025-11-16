@@ -1,6 +1,6 @@
 # Handy Wire Shelf Hook
 
-The Handy Wire Shelf Hook is designed to clip onto a wire shelf and hold most light-weight items you may put in a closet, such as umbrellas, lint rollers, and reusable shopping bags.
+The Handy Wire Shelf Hook is designed to clip onto the rods of a wire shelf and hold most light-weight items you may put in a closet, such as umbrellas, lint rollers, and reusable shopping bags.
 
 |||
 |-|-|
@@ -9,6 +9,12 @@ The Handy Wire Shelf Hook is designed to clip onto a wire shelf and hold most li
 ## Printing
 
 PETG or similar filament is recommended for printing the hook. PLA is not recommended because it loosens more over time when under tension, making it more likely to fail.
+
+## Dimensions
+
+With the default settings, the hook has a 20mm interior radius, 30mm exterior radius, and a width of 5mm. 
+
+These values and more can be edited directly in `hook.scad`, or by setting additional parameters in the included export script.
 
 ## Cloning this Repository
 
@@ -19,10 +25,6 @@ To get the submodule code when cloning, add the `--recurse-submodules` option to
 
 If you've already cloned the project, run this command in the project root to pull down the submodule:
 > `git submodule update --init`
-
-## Dimensions
-
-With the default settings, the hook has a 20mm interior radius, a width of 5mm, and clips onto a 6.5mm rod. These values and more can be edited directly in `hook.scad`, or by setting additional parameters in the included export script.
 
 ## Exporting
 
